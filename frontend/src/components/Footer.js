@@ -1,12 +1,9 @@
 import React from "react";
 
-function Footer() {
-  const date = new Date().getFullYear();
+export default function Footer() {
   return (
     <footer className="footer">
-      <p className="footer__copyright">&copy; {date} Kirill Golovin</p>
+      <p className="footer__copyright">&copy; 2022 Mesto Russia</p>
     </footer>
-  )
+  );
 }
-
-export default Footer

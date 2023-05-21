@@ -1,43 +1,43 @@
-import React from 'react';
+import React, { useRef, useEffect } from "react";
+import PopupWithForm from "./PopupWithForm";
 
-import PopupWithForm from './PopupWithForm';
-
-
-function EditAvatarPopup(props) {
-  const inputRef = React.useRef(null);
-
-  React.useEffect(() => {
-    inputRef.current.value = '';
-  }, [props.isOpen])
+export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
+  const link = useRef(null);
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    props.onUpdateAvatar({
-      avatar: inputRef.current.value,
+    onUpdateAvatar({
+      avatar: link.current.value,
     });
   }
 
+  useEffect(() => {
+    if (!isOpen) {
+      link.current.value = "";
+    }
+  }, [isOpen]);
   return (
     <PopupWithForm
-      name="avatar"
-      isOpen={props.isOpen}
-      onClose={props.onClose}
+      isOpen={isOpen}
       title="Обновить аватар"
+      name="upd-ava"
+      buttonText="Создать"
       onSubmit={handleSubmit}
-      buttonTitle={props.buttonTitle}
-      onClick={props.onClick} >
+      onClose={onClose}
+    >
       <input
-        ref={inputRef}
-        className="popup__input"
-        id="avatar-link"
-        type="text"
-        name="avatar"
-        placeholder="Ссылка на аватар"
-        required />
-      <span className="popup__error avatar-link-error"></span>
+        ref={link}
+        className="form__input form__input_avatar_link"
+        id="ava-url-input"
+        name="cardLink"
+        type="url"
+        placeholder="Ссылка на изображение"
+        autoComplete="off"
+        onChange={(e) => (link.current.value = e.target.value)}
+        required
+      />
+      <span className="form__input-error ava-url-input-error"></span>
     </PopupWithForm>
   );
 }
-
-export default EditAvatarPopup;

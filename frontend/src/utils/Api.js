@@ -1,98 +1,92 @@
 class Api {
   constructor({ baseUrl, headers }) {
-    this._baseUrl = baseUrl;
     this._headers = headers;
+    this._baseUrl = baseUrl;
   }
-
-  _checkResponse(res) {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  };
 
   _request(url, options) {
-    return fetch(`${this._baseUrl}${url}`, options).then(this._checkResponse);
+    return fetch(url, options).then(this._response);
   }
 
-  getUsersApi() {
-    return this._request("/users/me", {
+  _response(response) {
+    if (response.ok) {
+      return response.json();
+    }
+    return Promise.reject(`Произошла ошибка: ${response.status}`);
+  }
+
+  getProfile() {
+    return this._request(`${this._baseUrl}/users/me`, {
       method: "GET",
       headers: this._headers,
     });
   }
 
   getInitialCards() {
-    return this._request("/cards", {
-      method: 'GET',
+    return this._request(`${this._baseUrl}/cards`, {
+      method: "GET",
       headers: this._headers,
     });
   }
 
-  infoNewUser(name, about) {
-    return this._request("/users/me", {
-      method: 'PATCH',
-      headers: this._headers,
-      body: JSON.stringify({
-        name: name,
-        about: about
-      })
-    });
-  }
-
-  avatarNewUser(dataAvatar) {
-    return this._request("/users/me/avatar", {
-      method: 'PATCH',
+  setProfile(obj) {
+    return this._request(`${this._baseUrl}/users/me`, {
+      method: "PATCH",
       headers: this._headers,
       body: JSON.stringify({
-        avatar: dataAvatar,
-      })
+        name: obj.name,
+        about: obj.about,
+      }),
     });
   }
 
-  addNewCard(name, link) {
-    return this._request("/cards", {
-      method: 'POST',
+  addNewCard(obj) {
+    return this._request(`${this._baseUrl}/cards`, {
+      method: "POST",
       headers: this._headers,
       body: JSON.stringify({
-        name: name,
-        link: link,
-      })
+        name: obj.name,
+        link: obj.link,
+      }),
     });
   }
 
-  removeCard(id) {
-    return this._request(`/cards/${id}`, {
-      method: 'DELETE',
+  deleteCard(id) {
+    return this._request(`${this._baseUrl}/cards/${id}`, {
+      method: "DELETE",
       headers: this._headers,
     });
   }
 
-  likeCard(id) {
-    return this._request(`/cards/${id}/likes`, {
-      method: 'PUT',
-      headers: this._headers,
-    });
+  changeLikeCardStatus(cardId, isLiked) {
+    if (isLiked) {
+      return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
+        method: "PUT",
+        headers: this._headers,
+      });
+    } else {
+      return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
+        method: "DELETE",
+        headers: this._headers,
+      });
+    }
   }
 
-  deleteLike(id) {
-    return this._request(`/cards/${id}/likes`, {
-      method: 'DELETE',
+  setAvatar(obj) {
+    return this._request(`${this._baseUrl}/users/me/avatar`, {
+      method: "PATCH",
       headers: this._headers,
+      body: JSON.stringify({
+        avatar: obj.avatar,
+      }),
     });
-  }
-
-  changeLikeCardStatus(id, isLiked) {
-    return isLiked ? this.likeCard(id) : this.deleteLike(id);
   }
 }
-
-const api = new Api({
-  baseUrl: 'https://nomoreparties.co/v1/cohort-58',
+const apiConfig = {
+  baseUrl: "https://api.hellomesto.nomoredomains.monster",
   headers: {
-    authorization: '2e4da387-210d-4156-b421-ffadc6c7daf6',
-    'Content-Type': 'application/json'
-  }
-});
-
-export default api;
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+    "Content-Type": "application/json",
+  },
+};
+export const api = new Api(apiConfig);

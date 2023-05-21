@@ -3,17 +3,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
-const { errors } = require('celebrate');
-const errorMiddleware = require('./middlewares/error');
-const { requestLogger, errorLogger } = require('./middlewares/logger');
-
-const routerUsers = require('./routes/users');
-const routerCards = require('./routes/cards');
-const { login, createUsers } = require('./controllers/users');
+const { celebrate, Joi, errors } = require('celebrate');
+const router = require('./routes');
+const defaultError = require('./errors/default');
+const { createUser, login } = require('./controllers/users');
 const cors = require('./middlewares/cors');
 const auth = require('./middlewares/auth');
-const NotFoundError = require('./errors/not-found-error');
-const { validateLogin, validateRegister } = require('./middlewares/validation');
+const { REGEXP } = require('./utils/constants');
+const NotFoundError = require('./errors/notfound');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -33,12 +31,33 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signin', validateLogin, login);
-app.post('/signup', validateRegister, createUsers);
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string().regex(REGEXP),
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
+  }),
+  createUser
+);
+
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
+  }),
+  login
+);
 
 app.use(auth);
-app.use('/users', routerUsers);
-app.use('/cards', routerCards);
+app.use(router);
 
 app.use(errors());
 
@@ -47,6 +66,8 @@ app.use((req, res, next) => {
 });
 
 app.use(errorLogger);
-app.use(errorMiddleware);
+app.use(defaultError);
 
-app.listen(PORT);
+app.listen(PORT, () => {
+  console.log(`This server is start on ${PORT}`);
+});

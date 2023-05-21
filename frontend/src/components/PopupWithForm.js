@@ -1,34 +1,35 @@
-import React from 'react'
+import React from "react";
 
-function PopupWithForm({name, isOpen, onClick, onClose, title, onSubmit, children, buttonTitle, isRequest}) {
-
-  if (isRequest && name !== 'DeleteCard') {
-    buttonTitle = 'Сохранение...';
-  } else if (isRequest && name === 'DeleteCard') {
-    buttonTitle = 'Удаление...'
-  }
-
+export default function PopupWithForm({
+  title,
+  name,
+  buttonText,
+  children,
+  isOpen,
+  onClose,
+  onSubmit,
+}) {
   return (
-    <div
-      className={`popup popup_type_${name} ${isOpen ? `popup_opened` : ""}`}
-      onClick={onClick}
-    >
+    <div className={`popup popup_type_${name} ${isOpen ? "popup_opened" : ""}`}>
       <div className="popup__container">
-        <button
-          className="popup__close"
-          onClick={onClose}
-          type="button"
-        ></button>
         <h2 className="popup__title">{title}</h2>
-        <form className="popup__form" onSubmit={onSubmit} name={name}>
+        <form
+          className="form form_type_new-card"
+          name={name}
+          onSubmit={onSubmit}
+        >
           {children}
-          <button className={`popup__button_save ${name === 'DeleteCard' ? 'popup__button_delete-card' : null}`} type="submit">
-            {buttonTitle}
+          <button className="form__button" type="submit">
+            {buttonText}
           </button>
         </form>
+        <button
+          onClick={onClose}
+          type="button"
+          className="popup__close-button btn"
+          aria-label="Закрытие popup"
+        ></button>
       </div>
     </div>
   );
 }
-
-export default PopupWithForm

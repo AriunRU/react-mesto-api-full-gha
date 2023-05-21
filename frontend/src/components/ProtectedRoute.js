@@ -1,14 +1,11 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { AppContext } from "../contexts/AppContext";
 
-function ProtectedRoute({ element: Component, ...props }) {
-  const value = React.useContext(AppContext);
-  return value.state ? (
-    <Component {...props} />
-  ) : (
-    <Navigate to="/sign-in" replace />
-  );
+export default function ProtectedRoute({ children, isLogged }) {
+  console.log(isLogged);
+  if (isLogged) {
+    return children;
+  } else {
+    return <Navigate to={"/sign-up"} replace />;
+  }
 }
-
-export default ProtectedRoute;

@@ -1,58 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 
-function Login(props) {
-  const [password, setPassword] = React.useState("");
-  const [email, setEmail] = React.useState("");
-
-  function handlePasswordChange(e) {
-    setPassword(e.target.value);
-  }
-
-  function handleEmailChange(e) {
-    setEmail(e.target.value);
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    if (password || email) {
-      props.onSignIn(password, email);
-    }
-    return;
-  }
-
-  React.useEffect(() => {
-    setPassword("");
-    setEmail("");
-  }, []);
+export default function Login({ onLogin }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   return (
-    <div className="auth">
-      <h2 className="auth__title">Вход</h2>
-      <form className="auth__form" onSubmit={handleSubmit}>
-        <input
-          className="auth__input"
-          value={email}
-          onChange={handleEmailChange}
-          placeholder="Email"
-          type="email"
-          name="email"
-          id="email"
-          required />
-        <input
-          className="auth__input"
-          value={password}
-          onChange={handlePasswordChange}
-          placeholder="Пароль"
-          type="password"
-          name="password"
-          id="password"
-          required />
-        <button className="auth__submit-button" type="submit">
-          Войти
-        </button>
-      </form>
-    </div>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onLogin({ email, password });
+      }}
+      className="auth-form"
+    >
+      <p className="auth-form__welcome">Вход</p>
+      <input
+        className="auth-form__input form__input_user_email"
+        id="user-email-input"
+        name="email"
+        value={email}
+        type="email"
+        placeholder="Email"
+        minLength="2"
+        onChange={(e) => setEmail(e.target.value)}
+        maxLength="40"
+        required
+      />
+      <span className="form__input-error auth-form__input-error"></span>
+      <input
+        className="auth-form__input form__input_user_password"
+        id="user-password-input"
+        name="password"
+        type="password"
+        placeholder="Пароль"
+        minLength="6"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        maxLength="200"
+        required
+      />
+      <span className="form__input-error auth-form__input-error"></span>
+      <button type="submit" className="auth-form__submit-button">
+        Войти
+      </button>
+    </form>
   );
 }
-
-export default Login;

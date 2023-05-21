@@ -1,42 +1,50 @@
-export const BASE_URL = "https://auth.nomoreparties.co";
-
-function checkResponse(res) {
-  if (res.ok) {
-    return res.json();
+class Api {
+  constructor({ baseUrl }) {
+    this._baseUrl = baseUrl;
   }
-  return Promise.reject(`Ошибка: ${res.status}`);
-}
 
-function request(url, options) {
-  return fetch(`${BASE_URL}${url}`, options).then(checkResponse);
-}
+  _request(url, options) {
+    return fetch(url, options).then(this._response);
+  }
 
-export function register(password, email) {
-  return request("/signup", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ password, email }),
-  });
-}
+  _response(response) {
+    if (response.ok) {
+      return response.json();
+    }
+    return Promise.reject(`Произошла ошибка: ${response.status}`);
+  }
 
-export function authorize(password, email) {
-  return request(`/signin`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ password, email }),
-  });
-}
+  register(body) {
+    return this._request(`${this._baseUrl}/signup`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+  }
 
-export function checkToken(token) {
-  return request(`/users/me`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  login(body) {
+    return this._request(`${this._baseUrl}/signin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+  }
+
+  checkToken(token) {
+    return this._request(`${this._baseUrl}/users/me`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
 }
+const apiConfig = {
+  baseUrl: 'https://api.hellomesto.nomoredomains.monster',
+};
+export const auth = new Api(apiConfig);

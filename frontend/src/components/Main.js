@@ -1,54 +1,56 @@
-import React from 'react'
-import Card from './Card'
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import React, { useContext } from "react";
+import { CurrentUserContext } from "../context/CurrentUserContext";
 
+import Card from "./Card";
 
-function Main(props) {
-  const currentUser = React.useContext(CurrentUserContext);
+export default function Main({
+  onEditProfile,
+  onAddPlace,
+  onEditAvatar,
+  onCardClick,
+  cards,
+  onCardLike,
+  onCardDelete,
+}) {
+  const { currentUser } = useContext(CurrentUserContext);
 
   return (
     <main className="content">
       <section className="profile">
-        <div className="profile__avatar-container">
-          <img
-            className="profile__avatar"
-            src={currentUser.userAvatar}
-            alt={currentUser.userName} />
+        <img
+          onClick={onEditAvatar}
+          src={currentUser.avatar}
+          alt="Аватар"
+          className="profile__avatar"
+        />
+        <div className="profile__info">
+          <h1 className="profile__name">{currentUser.name}</h1>
           <button
-            className="profile__edit"
-            onClick={props.onEditAvatar}
-            type="button" />
-        </div>
-        <div className="profile__info-container">
-          <h1 className="profile__title">{currentUser.userName}</h1>
-          <button
-            onClick={props.onEditProfile}
             type="button"
-            aria-label="Редактировать"
-            className="profile__edit-button" />
-          <p className="profile__subtitle">{currentUser.userJob}</p>
+            className="profile__edit-button btn"
+            onClick={onEditProfile}
+          ></button>
+          <p className="profile__work">{currentUser.about}</p>
         </div>
         <button
-          onClick={props.onAddPlace}
           type="button"
-          aria-label="Закрыть"
-          className="profile__add-button" />
+          className="profile__add-button btn"
+          onClick={onAddPlace}
+        ></button>
       </section>
-      <section className="elements">
-        {props.cards.map(card => {
-          return (
+      <section className="card" aria-label="Карточки">
+        <ul className="card__items">
+          {cards.map((obj) => (
             <Card
-              card={card}
-              key={card._id}
-              onCardClick={props.onCardClick}
-              handleImagePopup={props.handleImagePopup}
-              onCardLike={props.onCardLike}
-              onCardDelete={props.onCardDelete} />
-          );
-        })}
+              key={obj._id}
+              obj={obj}
+              onCardClick={onCardClick}
+              onCardLike={onCardLike}
+              onCardDelete={onCardDelete}
+            />
+          ))}
+        </ul>
       </section>
     </main>
-  )
+  );
 }
-
-export default Main

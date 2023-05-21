@@ -1,8 +1,8 @@
 const allowedCors = [
-  'http://ariun.nomoredomains.monster',
-  'https://ariun.nomoredomains.monster',
-  'http://api.ariun.nomoredomains.monster',
-  'https://api.ariun.nomoredomains.monster',
+  'http://hellomesto.nomoredomains.monster',
+  'https://hellomesto.nomoredomains.monster',
+  'http://api.hellomesto.nomoredomains.monster',
+  'https://api.hellomesto.nomoredomains.monster',
   'localhost:3000',
   'http://localhost:3000',
   'https://localhost:3000',

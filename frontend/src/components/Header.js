@@ -1,51 +1,43 @@
-import { Route, Routes, Link } from "react-router-dom";
-
-function Header(props) {
+import React from "react";
+import { Link, Route, Routes } from "react-router-dom";
+import logoSvg from "../images/logo.svg";
+export default function Header({ email, onQuit }) {
   return (
     <header className="header">
-      <div className="header__logo"></div>
-      <div className="header__container">
-        <Routes>
-          <Route
-            exact
-            path="/"
-            element={
-              <>
-                <p className="header__link">{props.email}</p>
-                <button
-                  className="header__button"
-                  type="button"
-                  onClick={props.onSignOut}
-                >
-                  Выйти
-                </button>
-              </>
-            }
-          />
-          <Route
-            path="/sign-in"
-            element={
-              <>
-                <Link className="header__link" to="/sign-up">
-                  Регистрация
-                </Link>
-              </>
-            }
-          />
-          <Route
-            path="/sign-up"
-            element={
-              <>
-                <Link className="header__link" to="/sign-in">
+      <div className="header__flex">
+        <div>
+          <img className="header__logo" src={logoSvg} alt="Логотип Место" />
+        </div>
+        <div>
+          {email && <span className="header__email">{email}</span>}
+          <Routes>
+            <Route
+              path="/sign-up"
+              element={
+                <Link className="header__link" to={"/sign-in"}>
                   Войти
                 </Link>
-              </>
-            }
-          />
-        </Routes>
+              }
+            />
+            <Route
+              path="/sign-in"
+              element={
+                <Link className="header__link" to={"/sign-up"}>
+                  Регистрация
+                </Link>
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <Link className="header__link" onClick={onQuit} to={"/sign-in"}>
+                  Выйти
+                </Link>
+              }
+            />
+          </Routes>
+        </div>
       </div>
     </header>
   );
 }
-
-export default Header

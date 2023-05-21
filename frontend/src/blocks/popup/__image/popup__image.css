@@ -1,5 +1,5 @@
-.popup__image{
-  max-width: 75vw;
-  max-height: 75vh;
-  display: block;
+.popup__image {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
 }

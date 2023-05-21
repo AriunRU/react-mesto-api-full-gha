@@ -8,7 +8,7 @@
 
 ## Ссылки на проект
 
-IP-адрес 51.250.86.51
+IP-адрес 51.250.86.95
 
 Frontend https://ariun.nomoredomains.monster
 

@@ -25,6 +25,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(requestLogger);
 
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 app.post('/signin', validateLogin, login);
 app.post('/signup', validateRegister, createUsers);
 
@@ -32,8 +38,8 @@ app.use(auth);
 app.use('/users', routerUsers);
 app.use('/cards', routerCards);
 
-app.use((req, res) => {
-  res.status(NOT_FOUND_404).send({ message: 'Такой страницы не существует' });
+app.use((req, res, next) => {
+  new NotFoundError('Такой страницы не существует' )
 });
 
 app.use(errorLogger);

@@ -1,29 +1,31 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
 const { errors } = require('celebrate');
 const errorMiddleware = require('./middlewares/error');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const routerUsers = require('./routes/users');
 const routerCards = require('./routes/cards');
-const { NOT_FOUND_404 } = require('./utils/utils');
 const { login, createUsers } = require('./controllers/users');
+const cors = require('./middlewares/cors');
 const auth = require('./middlewares/auth');
+const NotFoundError = require('./errors/not-found-error');
 const { validateLogin, validateRegister } = require('./middlewares/validation');
 
+const { PORT = 3000 } = process.env;
 const app = express();
-const { PORT = 3000, PATH_MONGO = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
-mongoose.set('strictQuery', false);
 
-mongoose.connect(PATH_MONGO, {
-  useNewUrlParser: true,
-});
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(requestLogger);
+app.use(cors);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -38,12 +40,13 @@ app.use(auth);
 app.use('/users', routerUsers);
 app.use('/cards', routerCards);
 
+app.use(errors());
+
 app.use((req, res, next) => {
-  new NotFoundError('Такой страницы не существует' )
+  next(new NotFoundError('Такого адреса не существует.'));
 });
 
 app.use(errorLogger);
-app.use(errors());
 app.use(errorMiddleware);
 
 app.listen(PORT);

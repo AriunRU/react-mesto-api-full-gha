@@ -21,7 +21,8 @@
     "mongoose": "^7.0.5",
     "mongoose-type-url": "^2.1.0",
     "validator": "^13.9.0",
-    "winston": "^3.8.2"
+    "winston": "^3.8.2",
+    "dotenv": "^16.0.3"
   },
   "devDependencies": {
     "eslint": "^8.39.0",

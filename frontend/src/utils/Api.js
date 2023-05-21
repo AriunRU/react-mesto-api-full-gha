@@ -1,6 +1,6 @@
 class Api {
   constructor() {
-    this._baseURL = 'https://api.arokmeister.mesto.nomoredomains.monster';
+    this._baseURL = 'https://api.ariun.nomoredomains.monster';
     this._headers = { 'Content-Type': 'application/json; charset=UTF-8' };
     this._credentials = 'include';
   }

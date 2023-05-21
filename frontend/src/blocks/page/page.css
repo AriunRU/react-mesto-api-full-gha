@@ -1,23 +1,8 @@
 .page {
-  box-sizing: border-box;
-  background-color: #000000;
-  padding: 45px 19px 0;
-  display: grid;
-  grid-template-columns: minmax(max-content, 880px);
-  grid-template-rows: min-content auto min-content;
-  justify-content: center;
-  font-family: "Inter", "Arial", sans-serif;
-  min-height: 100vh;
-}
-
-@media screen and (max-width: 1024px) {
-  .page {
-    padding: 28px 19px 0;
-  }
-}
-
-@media screen and (max-width: 450px) {
-  .page {
-    padding: 28px 0 0;
-  }
+  max-width: 1280px;
+  min-width: 320px;
+  max-height: 100vh;
+  margin: 0 auto;
+  background-color: #000;
+  font-family: 'Inter', 'Helvatica', sans-serif;
 }

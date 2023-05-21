@@ -1,92 +1,82 @@
 class Api {
-  constructor({ baseUrl, headers }) {
-    this._headers = headers;
-    this._baseUrl = baseUrl;
+  constructor() {
+    this._baseURL = 'https://api.arokmeister.mesto.nomoredomains.monster';
+    this._headers = { 'Content-Type': 'application/json; charset=UTF-8' };
+    this._credentials = 'include';
   }
 
-  _request(url, options) {
-    return fetch(url, options).then(this._response);
-  }
-
-  _response(response) {
-    if (response.ok) {
-      return response.json();
+  _verifyResponse(res) {
+    if (!res.ok) {
+      return res.json().then(message => {throw new Error(message.message)})
     }
-    return Promise.reject(`Произошла ошибка: ${response.status}`);
+    return res.json();
   }
 
-  getProfile() {
-    return this._request(`${this._baseUrl}/users/me`, {
-      method: "GET",
+  getUserData() {
+    return fetch(`${this._baseURL}/users/me`, {
       headers: this._headers,
-    });
+      credentials: this._credentials
+    })
+      .then(res => this._verifyResponse(res));
   }
 
-  getInitialCards() {
-    return this._request(`${this._baseUrl}/cards`, {
-      method: "GET",
+  setUserData(data) {
+    return fetch(`${this._baseURL}/users/me`, {
+      method: 'PATCH',
       headers: this._headers,
-    });
+      credentials: this._credentials,
+      body: JSON.stringify(data)
+    })
+      .then(res => this._verifyResponse(res))
   }
 
-  setProfile(obj) {
-    return this._request(`${this._baseUrl}/users/me`, {
-      method: "PATCH",
+  getCards() {
+    return fetch(`${this._baseURL}/cards`, {
       headers: this._headers,
-      body: JSON.stringify({
-        name: obj.name,
-        about: obj.about,
-      }),
-    });
+      credentials: this._credentials
+  })
+    .then(res => this._verifyResponse(res));
   }
 
-  addNewCard(obj) {
-    return this._request(`${this._baseUrl}/cards`, {
-      method: "POST",
+  postCard(data) {
+    return fetch(`${this._baseURL}/cards`, {
+      method: 'POST',
       headers: this._headers,
-      body: JSON.stringify({
-        name: obj.name,
-        link: obj.link,
-      }),
-    });
+      credentials: this._credentials,
+      body: JSON.stringify(data)
+    })
+      .then(res => this._verifyResponse(res))
   }
 
-  deleteCard(id) {
-    return this._request(`${this._baseUrl}/cards/${id}`, {
-      method: "DELETE",
+  deleteCard(idCard) {
+    return fetch(`${this._baseURL}/cards/${idCard}`, {
+      method: 'DELETE',
       headers: this._headers,
-    });
+      credentials: this._credentials,
+    })
+      .then(res => this._verifyResponse(res))
   }
 
-  changeLikeCardStatus(cardId, isLiked) {
-    if (isLiked) {
-      return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
-        method: "PUT",
-        headers: this._headers,
-      });
-    } else {
-      return this._request(`${this._baseUrl}/cards/${cardId}/likes`, {
-        method: "DELETE",
-        headers: this._headers,
-      });
-    }
-  }
-
-  setAvatar(obj) {
-    return this._request(`${this._baseUrl}/users/me/avatar`, {
-      method: "PATCH",
+  updateAvatar(avatar) {
+    return fetch(`${this._baseURL}/users/me/avatar`, {
+      method: 'PATCH',
       headers: this._headers,
-      body: JSON.stringify({
-        avatar: obj.avatar,
-      }),
-    });
+      credentials: this._credentials,
+      body: JSON.stringify(avatar)
+    })
+      .then(res => this._verifyResponse(res)) 
+  }
+
+  setLikes(idCard, isLiked) {
+    return fetch(`${this._baseURL}/cards/${idCard}/likes`, {
+      method: isLiked ? 'DELETE' : 'PUT',
+      headers: this._headers,
+      credentials: this._credentials
+    })
+      .then(res => this._verifyResponse(res))
   }
 }
-const apiConfig = {
-  baseUrl: "https://api.hellomesto.nomoredomains.monster",
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
-    "Content-Type": "application/json",
-  },
-};
-export const api = new Api(apiConfig);
+
+const api = new Api()
+
+export default api

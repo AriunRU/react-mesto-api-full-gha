@@ -1,154 +1,105 @@
-require('dotenv').config();
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const UnauthorizedError = require('../errors/unauthorized');
-const NotFoundError = require('../errors/notfound');
-const ConflictError = require('../errors/conflict');
-const BadRequestError = require('../errors/badrequest');
+const { CREATED_201 } = require('../constants/constants');
+const { generateToken } = require('../utils/token');
+const NotFoundError = require('../utils/customError/NotFoundError');
 
-const { NODE_ENV, JWT_SECRET } = process.env;
-
-const getAllUsers = (req, res, next) => {
-  User.find({})
-    .then((users) => {
-      if (!users) {
-        throw new NotFoundError('Пользователи не найдены.');
-      }
-      return res.send(users);
-    })
-    .catch(next);
-};
-
-const createUser = (req, res, next) => {
-  const {
-    name, about, avatar, email, password
-  } = req.body;
-  bcrypt.hash(password, 10).then((hash) => {
-    User.create({
-      name, about, avatar, email, password: hash
-    })
-      .then((newUser) => res.status(201).send({
-        name: newUser.name,
-        about: newUser.about,
-        avatar: newUser.avatar,
-        email: newUser.email
-      }))
-      .catch((err) => {
-        if (err.code === 11000) {
-          next(
-            new ConflictError('Пользователь с таким email уже существует.')
-          );
-        } else if (err.name === 'ValidationError') {
-          next(
-            new BadRequestError('Некорректные данные при создании пользователя.')
-          );
-        } else {
-          next(err);
-        }
-      });
-  })
-    .catch(next);
-};
-
-const login = (req, res, next) => {
+async function login(req, res, next) {
   const { email, password } = req.body;
+  try {
+    const user = await User.findUserByCredentials(email, password);
+    const payload = { _id: user._id };
+    const token = generateToken(payload);
+    res
+      .cookie('jwt', token, { maxAge: (3600000 * 24 * 7), httpOnly: true, sameSite: true })
+      .send({ message: 'Авторизация прошла успешно' });
+  } catch (err) {
+    next(err);
+  }
+}
 
-  User.findOne({ email }).select('+password')
-    .then((user) => {
-      if (!user) {
-        throw new UnauthorizedError('Пользователь не найден.');
-      }
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) {
-            return next(new UnauthorizedError('Не правильно указан логин или пароль.'));
-          }
+async function getAllUsers(_, res, next) {
+  try {
+    const users = await User.find({});
+    if (users.length === 0) {
+      throw new NotFoundError('Пользователей нет');
+    }
+    res.send({ users });
+  } catch (err) {
+    next(err);
+  }
+}
 
-          const token = jwt.sign(
-            { _id: user._id },
+async function getUser(req, res, next) {
+  const { id } = req.params;
 
-            NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-            { expiresIn: '7d' }
-          );
-          return res.send({ token });
-        });
-    })
-    .catch(next);
-};
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      throw new NotFoundError('Пользователя с данным id не найдено');
+    }
 
-const getUserById = (req, res, next) => {
-  User.findById(req.params.userId)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Информация о пользователе не найдена.');
-      }
-      return res.send(user);
-    })
-    .catch(next);
-};
+    res.send(user);
+  } catch (err) {
+    next(err);
+  }
+}
 
-const editProfile = (req, res, next) => {
+async function getMe(req, res, next) {
   const { _id } = req.user;
-  const { name, about } = req.body;
+  try {
+    const user = await User.findById(_id);
+    res.send(user);
+  } catch (err) {
+    next(err);
+  }
+}
 
-  User.findByIdAndUpdate(_id, { name, about }, { new: true, runValidators: true })
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Информация о пользователе не найдена.');
-      }
-      return res.send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(
-          new BadRequestError('Некорректные данные при редактировании профиля.')
-        );
-      } else {
-        next(err);
-      }
+async function createUser(req, res, next) {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+
+  try {
+    const hash = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      name, about, avatar, email, password: hash,
     });
-};
 
-const updateAvatar = (req, res, next) => {
+    res.status(CREATED_201).send(user); // user in obj
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function updateUserInfo(req, res, next) {
   const { _id } = req.user;
-  const { avatar } = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(
+      _id,
+      req.body,
+      { new: true, runValidators: true },
+    );
+    res.send(user);
+  } catch (err) {
+    next(err);
+  }
+}
 
-  User.findByIdAndUpdate(_id, { avatar }, { new: true, runValidators: true })
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Информация о пользователе не найдена.');
-      }
-      return res.send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(
-          new BadRequestError('Некорректные данные при обновлении аватара.')
-        );
-      } else {
-        next(err);
-      }
-    });
-};
-
-const getCurrentUser = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь не найден.');
-      }
-      return res.send(user);
-    })
-    .catch(next);
-};
+function clearCookie(req, res, next) {
+  try {
+    res.clearCookie('jwt').send({ message: 'Cookie clear' });
+  } catch (err) {
+    next(err);
+  }
+}
 
 module.exports = {
-  getAllUsers,
-  getUserById,
-  updateAvatar,
-  editProfile,
-  createUser,
   login,
-  getCurrentUser
+  getMe,
+  createUser,
+  getUser,
+  getAllUsers,
+  updateUserInfo,
+  clearCookie,
 };

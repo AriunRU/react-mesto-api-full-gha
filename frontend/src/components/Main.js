@@ -1,56 +1,38 @@
-import React, { useContext } from "react";
-import { CurrentUserContext } from "../context/CurrentUserContext";
-
+import { useContext } from "react";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import Card from "./Card";
 
-export default function Main({
-  onEditProfile,
-  onAddPlace,
-  onEditAvatar,
-  onCardClick,
-  cards,
-  onCardLike,
-  onCardDelete,
-}) {
-  const { currentUser } = useContext(CurrentUserContext);
+function Main({ onEditProfile, onAddPlace, onEditAvatar, cards, onCardClick, onCardLike, onCardDelete }) {
 
+  const currentUser = useContext(CurrentUserContext);
+  
   return (
     <main className="content">
       <section className="profile">
-        <img
-          onClick={onEditAvatar}
-          src={currentUser.avatar}
-          alt="Аватар"
-          className="profile__avatar"
-        />
+        <div className="profile__image-edit" onClick={onEditAvatar} />
+        <img className="profile__avatar" src={currentUser.avatar} alt="Аватар пользователя" />
         <div className="profile__info">
           <h1 className="profile__name">{currentUser.name}</h1>
-          <button
-            type="button"
-            className="profile__edit-button btn"
-            onClick={onEditProfile}
-          ></button>
-          <p className="profile__work">{currentUser.about}</p>
+          <button className="profile__edit-btn" type="button" aria-label="Редактировать профиль" onClick={onEditProfile} />
+          <p className="profile__profession">{currentUser.about}</p>
         </div>
-        <button
-          type="button"
-          className="profile__add-button btn"
-          onClick={onAddPlace}
-        ></button>
+        <button className="profile__add-btn" type="button" aria-label="Добавить фото" onClick={onAddPlace} />
       </section>
-      <section className="card" aria-label="Карточки">
-        <ul className="card__items">
-          {cards.map((obj) => (
-            <Card
-              key={obj._id}
-              obj={obj}
-              onCardClick={onCardClick}
-              onCardLike={onCardLike}
-              onCardDelete={onCardDelete}
-            />
-          ))}
+      <section className="elements" aria-label="Секция карточек">
+        <ul className="elements__list">
+          {cards.map(card => (
+            <Card 
+              key={card._id} 
+              card={card} 
+              onCardClick={onCardClick} 
+              onCardLike={onCardLike} 
+              onCardDelete={onCardDelete} 
+            />))
+          }
         </ul>
       </section>
     </main>
-  );
+  )
 }
+
+export default Main

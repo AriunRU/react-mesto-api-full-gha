@@ -1,50 +1,50 @@
-class Api {
-  constructor({ baseUrl }) {
-    this._baseUrl = baseUrl;
+export const BASE_URL = 'https://api.arokmeister.mesto.nomoredomains.monster';
+
+function makeRequest(url, method, body) {
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  } 
+
+  const config = {
+    method,
+    headers,
+    credentials: 'include'
   }
 
-  _request(url, options) {
-    return fetch(url, options).then(this._response);
+  if (body !== undefined) {
+    config.body = JSON.stringify(body)
   }
 
-  _response(response) {
-    if (response.ok) {
-      return response.json();
+  function verifyResponse(res) {
+    if (!res.ok) {
+      return res.json().then(message => { 
+        if (message.error) {
+          throw new Error(message.error)
+        }
+        if (message.message) {
+          throw new Error(message.message)
+        }
+      })
     }
-    return Promise.reject(`Произошла ошибка: ${response.status}`);
+    return res.json();
   }
 
-  register(body) {
-    return this._request(`${this._baseUrl}/signup`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-  }
-
-  login(body) {
-    return this._request(`${this._baseUrl}/signin`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-  }
-
-  checkToken(token) {
-    return this._request(`${this._baseUrl}/users/me`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  }
+  return fetch(`${BASE_URL}${url}`, config).then((res) => verifyResponse(res))
 }
-const apiConfig = {
-  baseUrl: 'https://api.hellomesto.nomoredomains.monster',
-};
-export const auth = new Api(apiConfig);
+
+export const register = (email, password) => {
+  return makeRequest('/signup', 'POST', { email, password })
+}
+
+export const authorize = (email, password) => {
+  return makeRequest('/signin', 'POST', { email, password })
+}
+
+export const checkToken = () => {
+  return makeRequest('/users/me', 'GET', undefined)
+}
+
+export const clearToken = () => {
+  return makeRequest('/signout', 'POST', undefined)
+}

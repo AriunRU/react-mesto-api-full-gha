@@ -1,43 +1,21 @@
-import React from "react";
-import { Link, Route, Routes } from "react-router-dom";
-import logoSvg from "../images/logo.svg";
-export default function Header({ email, onQuit }) {
+import { Link, Route, Routes } from 'react-router-dom';
+import logo from '../images/header__logo.svg';
+
+function Header({ onLogout, email }) {
+
   return (
     <header className="header">
-      <div className="header__flex">
-        <div>
-          <img className="header__logo" src={logoSvg} alt="Логотип Место" />
-        </div>
-        <div>
-          {email && <span className="header__email">{email}</span>}
-          <Routes>
-            <Route
-              path="/sign-up"
-              element={
-                <Link className="header__link" to={"/sign-in"}>
-                  Войти
-                </Link>
-              }
-            />
-            <Route
-              path="/sign-in"
-              element={
-                <Link className="header__link" to={"/sign-up"}>
-                  Регистрация
-                </Link>
-              }
-            />
-            <Route
-              path="/"
-              element={
-                <Link className="header__link" onClick={onQuit} to={"/sign-in"}>
-                  Выйти
-                </Link>
-              }
-            />
-          </Routes>
-        </div>
+      <img className="header__logo" src={logo} alt="Логотип Mesto Russia" />
+      <div className='header__container'>
+        <p className='header__email'>{email}</p>
+        <Routes>
+          <Route path='/signin' element={<Link to='/signup' className="header__link">Регистрация</Link>} />
+          <Route path='/signup'element={<Link to='/signin' className="header__link">Войти</Link>} />
+          <Route path='/' element={<Link onClick={onLogout} to='/signin' className="header__link" style={{ color: "#A9A9A9" }} >Выход</Link>} />
+        </Routes>
       </div>
     </header>
   );
 }
+
+export default Header;

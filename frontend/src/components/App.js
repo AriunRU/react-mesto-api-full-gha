@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import api from '../utils/Api';
-import * as auth from '../utils/auth';
+import * as auth from '../utils/Auth';
 import Loader from './loader/Loader';
 import Header from './Header.js';
 import Main from './Main.js';

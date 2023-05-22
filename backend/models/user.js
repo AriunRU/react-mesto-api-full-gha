@@ -2,38 +2,38 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const UnauthorizedError = require('../utils/customError/UnauthorizedError');
-const { patternLink } = require('../constants/constants');
+const { REGEX } = require('../constants/constants');
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
+    minlength: 2,
+    maxlength: 30,
     default: 'Жак-Ив Кусто',
-    minlength: [2, 'Минимальная длина поля имени пользователя 2 символа'],
-    maxlength: [30, 'Максимальная длинна поля имени пользователя 30 символов'],
   },
   about: {
     type: String,
+    minlength: 2,
+    maxlength: 30,
     default: 'Исследователь',
-    minlength: [2, 'Минимальная длина поля описания пользователя 2 символа'],
-    maxlength: [30, 'Максимальная длинна поля описания пользователя 30 символов'],
   },
   avatar: {
     type: String,
-    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator(values) {
-        return patternLink.test(values);
+        return REGEX.test(values);
       },
     },
+    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
   email: {
     type: String,
+    required: true,
+    unique: true,
     validate: {
       validator: validator.isEmail,
       message: 'Неверный формат почты',
     },
-    required: true,
-    unique: true,
   },
   password: {
     type: String,

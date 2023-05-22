@@ -9,14 +9,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ArokMeister/react-mesto-api-full-gha.git"
+    "url": "git+https://github.com/AriunRU/react-mesto-api-full-gha"
   },
   "keywords": [],
   "author": "Kirill Golovin",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ArokMeister/react-mesto-api-full-gha/issues"
-  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "celebrate": "^15.0.1",

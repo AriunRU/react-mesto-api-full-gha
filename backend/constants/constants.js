@@ -10,7 +10,7 @@ const {
   HTTP_STATUS_CONFLICT: CONFLICT_409,
 } = http2.constants;
 
-const patternLink = /^https?:\/\/(?:www\.)?[A-Za-z0-9-._~:/?#[\]@!$&'()*+,;=]+(?:#[A-Za-z0-9-._~:/?#[\]@!$&'()*+,;=]+)?$/m;
+const REGEX = /^https?:\/\/(?:www\.)?[A-Za-z0-9-._~:/?#[\]@!$&'()*+,;=]+(?:#[A-Za-z0-9-._~:/?#[\]@!$&'()*+,;=]+)?$/m;
 
 module.exports = {
   CREATED_201,
@@ -20,5 +20,5 @@ module.exports = {
   NOT_FOUND_404,
   CONFLICT_409,
   SERVER_ERROR_500,
-  patternLink,
+  REGEX,
 };

@@ -1,11 +1,11 @@
 const { celebrate, Joi } = require('celebrate');
-const { patternLink } = require('../../constants/constants');
+const { REGEX } = require('../../constants/constants');
 
 const userRegisterValidation = celebrate({
   body: Joi.object({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(patternLink),
+    avatar: Joi.string().pattern(REGEX),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),
@@ -27,7 +27,7 @@ const userInfoValidation = celebrate({
 
 const userAvatarValidation = celebrate({
   body: Joi.object({
-    avatar: Joi.string().pattern(patternLink).required(),
+    avatar: Joi.string().pattern(REGEX).required(),
   }),
 });
 

@@ -66,7 +66,7 @@ async function createUser(req, res, next) {
       name, about, avatar, email, password: hash,
     });
 
-    res.status(CREATED_201).send(user); // user in obj
+    res.status(CREATED_201).send(user);
   } catch (err) {
     next(err);
   }

@@ -16,7 +16,6 @@ function InfoTooltip({ error, onClose, isOpen }) {
       <div className="popup__container popup__container-succes">
         <button className="popup__close-button" type="button" aria-label="Закрыть" onClick={handleClose} />
         <img className="popup__image-succes" src={!error ? succesImage : failImage} alt='' />
-        {/* { !error ? <img className="popup__image-succes" src={succesImage} alt='' /> : <img className="popup__image-succes" src={failImage} alt='' /> } */}
         <h2 className="popup__title popup__title-succes">{!error ? 'Вы успешно зарегистрировались!' : 'Что то пошло не так! Попробуйте еще раз!'}</h2>
         <span className="popup__error-succes">{error}</span>
       </div>

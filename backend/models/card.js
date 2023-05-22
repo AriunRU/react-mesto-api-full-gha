@@ -1,26 +1,26 @@
 const mongoose = require('mongoose');
-const { patternLink } = require('../constants/constants');
+const { REGEX } = require('../constants/constants');
 
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Имя карточки не передано'],
-    minlength: [2, 'Минимальная длина имени карточки 2 символа'],
-    maxlength: [30, 'Максимальная длина имени карточки 30 символа'],
+    required: true,
+    minlength: 2,
+    maxlength: 30,
   },
   link: {
     type: String,
-    required: [true, 'Ссылка на карточку не передана'],
+    required: true,
     validate: {
       validator(values) {
-        return patternLink.test(values);
+        return REGEX.test(values);
       },
     },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
-    required: [true, 'Создатель карточки не передан'],
+    required: true,
   },
   likes: {
     type: [mongoose.Schema.Types.ObjectId],

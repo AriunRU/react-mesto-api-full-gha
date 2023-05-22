@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://api.ariun.nomoredomains.monster';
+export const BASE_URL = 'http://api.ariun.nomoredomains.monster';
 
 function makeRequest(url, method, body) {
   const headers = {

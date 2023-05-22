@@ -11,7 +11,6 @@ import Login from './authorize/Login';
 import ProtectedRoute from './ProtectedRoute';
 import Register from './authorize/Register';
 import ImagePopup from './popups/ImagePopup.js';
-import ErrorPopup from './popups/ErrorPopup.js';
 import EditProfilePopup from './popups/EditProfilePopup';
 import EditAvatarPopup from './popups/EditAvatarPopup';
 import AddPlacePopup from './popups/AddPlacePopup';
@@ -238,11 +237,6 @@ function App() {
 
       <ImagePopup
         card={selectedCard}
-        onClose={handleCloseAllPopups}
-      />
-
-      <ErrorPopup
-        error={error}
         onClose={handleCloseAllPopups}
       />
 

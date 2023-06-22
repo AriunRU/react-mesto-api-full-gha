@@ -23,6 +23,7 @@ function Register({ onRegister, loggedIn }) {
     <>
       <h1 className="form__title">Регистрация</h1>
       <AuthorizeForm onChange={onChange} onSubmit={submit} values={values} btnText='Зарегистрироваться' />
+      <p className="form__subtitle"> Даю <Link to="/signin" className="form__link">Войти</Link> на обработку персональных данных </p>
       <p className="form__subtitle">Уже зарегистрированы? <Link to="/signin" className="form__link">Войти</Link> </p>
     </>
 

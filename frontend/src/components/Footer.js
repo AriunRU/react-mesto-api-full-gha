@@ -8,7 +8,7 @@ function Footer() {
   return (
     <footer className="footer">
       {location.pathname === '/' && (
-        <p className="footer__copyright">&copy; {date} Kirill Golovin</p>
+        <p className="footer__copyright">&copy; {date} Kirill Golovin связь с автором сайта ariun.mesto@gmail.com</p>
       )}
     </footer>
   )
